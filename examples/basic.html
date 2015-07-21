@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js"><!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Selectize.Infinite.Scroll.js Demo</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+		<link rel="stylesheet" href="../bower_components/selectize/dist/css/selectize.css">
+
+    <!--[if IE 8]><script src="../bower_components/es5-shim/es5shim.js"></script><![endif]-->
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="../bower_components/selectize/dist/js/standalone/selectize.js"></script>
+		<script src="../src/main.js"></script>
+		<style>
+			.loading .selectize-dropdown-content:after {
+				content: 'loading...';
+				height: 30px;
+				display: block;
+				text-align: center;
+			}
+		</style>
+	</head>
+    <body>
+		<div id="wrapper">
+			<h1>Selectize.js</h1>
+
+			<div class="demo">
+				<h2>Infinite Scroll</h2>
+				<div class="control-group">
+					<label for="select-user">Github user:</label>
+					<select id="select-user" class="user" placeholder="Pick a user..."></select>
+				</div>
+				<script>
+					(function(){
+						var totalCount
+							, page
+							, perPage = 50;
+
+						$('#select-user').selectize({
+							plugins: ['infinite_scroll'],
+							valueField: 'url',
+							labelField: 'login',
+							searchField: ['login'],
+							load: function(query, callback) {
+								query = JSON.parse(query)
+								page = query.page || 1
+
+								if(!totalCount || totalCount > ( (page - 1) * perPage) ){
+									$.ajax({
+										url: 'https://api.github.com/search/users?q=' + query.search  + '+location:Brasil+location:Brazil&per_page=' + perPage + '&page=' + query.page,
+										error: function() {
+											callback();
+										},
+										success: function(res) {
+											totalCount = res.total_count;
+											callback(res.items);
+										}
+									});
+								} else {
+									callback();
+								}
+							}
+						})
+					})()
+				</script>
+			</div>
+	</body>
+</html>
