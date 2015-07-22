@@ -17,8 +17,8 @@ Selectize.define('infinite_scroll', function(options) {
     }
   };
 
-	self.setup = (function() {
-		var original = self.setup;
+	self.onFocus = (function() {
+		var original = self.onFocus;
 
 		return function() {
       var query = JSON.stringify({
